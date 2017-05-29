@@ -1,0 +1,30 @@
+{
+  "name": "echosampleapp",
+  "version": "1.0.0",
+  "description": "echo application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thisiszoaib/echo-app.git"
+  },
+  "keywords": [
+    "echo",
+    "api",
+    "ai",
+    "machine",
+    "learning"
+  ],
+  "author": "Zoaib",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thisiszoaib/echo-app/issues"
+  },
+  "homepage": "https://github.com/thisiszoaib/echo-app#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  }
+}
