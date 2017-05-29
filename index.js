@@ -22,6 +22,6 @@ restService.post('/echo', function(req, res) {
     });
 });
 
-restService.listen(3000,function(){
-	console.log('Example app listening on port 3000');
+restService.listen((process.env.PORT || 8000),function(){
+	console.log('Server started.');
 })
