@@ -79,6 +79,6 @@ restService.post('/echo', function (req, res) {
 
 });
 
-restService.listen(80, function () {
+restService.listen((process.env.PORT || 80), function () {
   console.log('Server started.');
 })
