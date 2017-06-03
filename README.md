@@ -1,2 +1,2 @@
-# echo-app
-Echo Sample App for API.AI
+# digie-brain-app
+Digie Brain App for API.AI
