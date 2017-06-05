@@ -73,6 +73,7 @@ restService.post('/processStatement', function (req, res) {
         });
       });
     } else {
+      console.log("using existing authentication " + apiAiSessionId);
       var processStatementOptions = {
         url: 'https://mydigie.com/php/processStatement.php',
         headers: {
