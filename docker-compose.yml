@@ -3,7 +3,5 @@ version: '2.1'
 services:
   echosampleapp:
     build: .
-    volumes:
-      - .:/usr/src/app
     ports:
       - 80:80
