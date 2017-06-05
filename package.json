@@ -1,5 +1,5 @@
 {
-  "name": "echosampleapp",
+  "name": "digiebrainapp",
   "version": "1.0.0",
   "description": "echo application",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thisiszoaib/echo-app.git"
+    "url": "git+https://github.com/thisiszoaib/digie-brain-app.git"
   },
   "keywords": [
     "echo",
@@ -20,9 +20,9 @@
   "author": "Zoaib",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thisiszoaib/echo-app/issues"
+    "url": "https://github.com/thisiszoaib/digie-brain-app/issues"
   },
-  "homepage": "https://github.com/thisiszoaib/echo-app#readme",
+  "homepage": "https://github.com/thisiszoaib/digie-brain-app#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
