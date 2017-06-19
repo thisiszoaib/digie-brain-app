@@ -1,9 +1,19 @@
+'use strict';
+
 const express = require('express');
 const restService = express();
 const bodyParser = require('body-parser');
-const request = require('request');
 const nodeCache = require('node-cache');
 const myCache = new nodeCache();
+
+var Promise = require('bluebird');
+const request = Promise.promisifyAll(require('request'), { multiArgs: true });
+
+const apiai = require('apiai');
+const app = apiai('3c6d861ecce14afc8c47ca3371db4fb0');
+
+
+const processStatementUrl = 'https://mydigie.com/php/processStatement.php';
 
 var optionsAuthenticate = {
   url: 'https://mydigie.com/php/authenticateUser.php',
@@ -23,79 +33,77 @@ restService.use(bodyParser.urlencoded({
 
 restService.use(bodyParser.json());
 
-restService.get('/', function (req, res) {
+restService.get('/', (req, res) => {
   res.send('Hello World.')
 })
 
-restService.post('/processStatement', function (req, res) {
-  var isStatementThere = req.body.result && req.body.result.parameters && req.body.result.parameters.statement;
+restService.post('/processStatement', (req, res) => {
+  let isStatementThere = req.body.result && req.body.result.parameters && req.body.result.parameters.statement;
 
   if (isStatementThere) {
 
-    var statement = req.body.result.parameters.statement;
+    let statement = req.body.result.parameters.statement;
 
-    var apiAiSessionId = req.body.sessionId;
+    let apiAiSessionId = req.body.sessionId;
 
-    var digieSessionId = myCache.get(apiAiSessionId);
+    setTimeout(doApiAiEventRequest.bind(null,apiAiSessionId),10000);
 
-    if (digieSessionId == undefined) {
-        request(optionsAuthenticate, function (error, response, body) {
-        var authenticationResponse = body;
-        authenticationResponse = authenticationResponse.replace(/[\n\r\t]/g, ' ');
-        authenticationResponse = authenticationResponse.trim();
+    let digieSessionId = myCache.get(apiAiSessionId);
 
-        var separatedResponse = authenticationResponse.split("-");
-        var sessionId = separatedResponse[0].substring(13).trim();
+    if (digieSessionId === undefined) {
 
-        myCache.set(apiAiSessionId,sessionId);
+      request.postAsync(optionsAuthenticate)
 
-        var processStatementOptions = {
-          url: 'https://mydigie.com/php/processStatement.php',
-          headers: {
-            'Cookie': 'PHPSESSID=' + sessionId,
-            'Connection': 'keep-alive',
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          method: 'POST',
-          body: 'SessionID=' + sessionId + '&Language=English&DBName=myDigie&Statement=' + statement,
-          rejectUnauthorized: false
-        };
+        .then((response) => {
+          let authenticationResponse = response[1].replace(/[\n\r\t]/g, ' ').trim();
 
-        request(processStatementOptions, function (error, response, body) {
+          let separatedResponse = authenticationResponse.split("-");
+          let sessionId = separatedResponse[0].substring(13).trim();
 
-          var speech = body.replace(/[\n\r\t]/g, ' ').trim().substring(15);
+          myCache.set(apiAiSessionId, sessionId);
+
+          return getOptionsObject(sessionId,statement);
+        })
+        .then((requestOptions) => {
+
+          return request.postAsync(requestOptions);
+
+        }
+        )
+        .then((response) => {
+
+          let speech = response[1].replace(/[\n\r\t]/g, ' ').trim().substring(15);
 
           return res.json({
             speech: speech,
             displayText: speech,
             source: 'digie-brain-app'
           });
-        });
-      });
+        })
+        .catch(error => console.log(error));
+
     } else {
       console.log("using existing authentication " + apiAiSessionId);
-      var processStatementOptions = {
-        url: 'https://mydigie.com/php/processStatement.php',
-        headers: {
-          'Cookie': 'PHPSESSID=' + digieSessionId,
-          'Connection': 'keep-alive',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        method: 'POST',
-        body: 'SessionID=' + digieSessionId + '&Language=English&DBName=myDigie&Statement=' + statement,
-        rejectUnauthorized: false
-      };
 
-      request(processStatementOptions, function (error, response, body) {
+      request.postAsync(getOptionsObject(digieSessionId,statement))
+        .then((response) => {
 
-        var speech = body.replace(/[\n\r\t]/g, ' ').trim().substring(15);
+          let speech = response[1].replace(/[\n\r\t]/g, ' ').trim().substring(15);
 
-        return res.json({
-          speech: speech,
-          displayText: speech,
-          source: 'digie-brain-app'
+          return res.json({
+            speech: speech,
+            displayText: speech,
+            source: 'digie-brain-app'
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          return res.json({
+            speech: 'There was a technical error.',
+            displayText: 'There was a technical error.',
+            source: 'digie-brain-app'
+          });
         });
-      });
     }
 
 
@@ -107,11 +115,46 @@ restService.post('/processStatement', function (req, res) {
     });
   }
 
-
-
+  
 
 });
 
 restService.listen((process.env.PORT || 80), function () {
   console.log('Server started.');
 })
+
+function getOptionsObject(sessionId,statement)
+{
+  return {
+        url: processStatementUrl,
+        headers: {
+          'Cookie': 'PHPSESSID=' + sessionId,
+          'Connection': 'keep-alive',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        method: 'POST',
+        body: 'SessionID=' + sessionId + '&Language=English&DBName=myDigie&Statement=' + statement,
+        rejectUnauthorized: false
+      };
+}
+
+function doApiAiEventRequest(currentSessionId)
+{
+
+  let eventObject = {
+      name : "digie_message",
+      data : {
+        message:"Node App sent this after timer"
+      }
+  };
+
+  let eventRequest = app.eventRequest(eventObject,{sessionId:currentSessionId});
+
+  eventRequest.on('response',response => console.log(response));
+
+  eventRequest.on('error',error => console.log(error));
+
+  eventRequest.end();
+
+  console.log("Event Request Sent. " + currentSessionId);
+}
