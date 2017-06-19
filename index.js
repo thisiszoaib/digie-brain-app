@@ -148,7 +148,7 @@ function doApiAiEventRequest(currentSessionId)
       }
   };
 
-  let eventRequest = app.eventRequest(eventObject,{sessionId:currentSessionId});
+  let eventRequest = app.textRequest("Who am I?",{sessionId:currentSessionId});
 
   eventRequest.on('response',response => console.log(response));
 
