@@ -39,15 +39,15 @@ restService.get('/', (req, res) => {
   res.send('Hello World.')
 })
 
-// var connector = new builder.ChatConnector({
-//   appId:process.env.MICROSOFT_APP_ID,
-//   appPassword: process.env.MICROSOFT_APP_PASSWORD
-// });
-
 var connector = new builder.ChatConnector({
-  appId:null,
-  appPassword: null
+  appId:process.env.MICROSOFT_APP_ID,
+  appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
+
+// var connector = new builder.ChatConnector({
+//   appId:null,
+//   appPassword: null
+// });
 
 var bot = new builder.UniversalBot(connector,(session) => 
 {
