@@ -4,7 +4,7 @@
   "description": "echo application",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "MICROSOFT_APP_ID=b15edddf-5ce0-4de2-9f44-1fadeeb4103d MICROSOFT_APP_PASSWORD=Pg0v85xEXBB5TL5GMPtYWJ3 node index.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "apiai": "^4.0.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
+    "botbuilder": "^3.8.4",
     "express": "^4.15.3",
     "node-cache": "^4.1.1",
     "request": "^2.81.0"

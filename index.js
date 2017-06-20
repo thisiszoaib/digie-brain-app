@@ -12,6 +12,8 @@ const request = Promise.promisifyAll(require('request'), { multiArgs: true });
 const apiai = require('apiai');
 const app = apiai('3c6d861ecce14afc8c47ca3371db4fb0');
 
+const builder = require('botbuilder');
+
 
 const processStatementUrl = 'https://mydigie.com/php/processStatement.php';
 
@@ -36,6 +38,18 @@ restService.use(bodyParser.json());
 restService.get('/', (req, res) => {
   res.send('Hello World.')
 })
+
+var connector = new builder.ChatConnector({
+  appId:process.env.MICROSOFT_APP_ID,
+  appPassword: process.env.MICROSOFT_APP_PASSWORD
+});
+
+var bot = new builder.UniversalBot(connector,(session) => 
+{
+    session.send("You said: %s",session.message.text);
+});
+
+restService.post('api/messages',connector.listen());
 
 restService.post('/processStatement', (req, res) => {
   let isStatementThere = req.body.result && req.body.result.parameters && req.body.result.parameters.statement;
