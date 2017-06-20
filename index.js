@@ -39,9 +39,14 @@ restService.get('/', (req, res) => {
   res.send('Hello World.')
 })
 
+// var connector = new builder.ChatConnector({
+//   appId:process.env.MICROSOFT_APP_ID,
+//   appPassword: process.env.MICROSOFT_APP_PASSWORD
+// });
+
 var connector = new builder.ChatConnector({
-  appId:process.env.MICROSOFT_APP_ID,
-  appPassword: process.env.MICROSOFT_APP_PASSWORD
+  appId:null,
+  appPassword: null
 });
 
 var bot = new builder.UniversalBot(connector,(session) => 
@@ -49,7 +54,7 @@ var bot = new builder.UniversalBot(connector,(session) =>
     session.send("You said: %s",session.message.text);
 });
 
-restService.post('api/messages',connector.listen());
+restService.post('/api/messages',connector.listen());
 
 restService.post('/processStatement', (req, res) => {
   let isStatementThere = req.body.result && req.body.result.parameters && req.body.result.parameters.statement;
