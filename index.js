@@ -52,6 +52,10 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector,(session) => 
 {
     session.send("You said: %s",session.message.text);
+    session.send("Sending another message in 5 seconds...");
+
+    setTimeout(()=>{ session.send("This is a message after five seconds."); },5000);
+
 });
 
 restService.post('/api/messages',connector.listen());
