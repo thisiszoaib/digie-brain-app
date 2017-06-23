@@ -39,26 +39,26 @@ restService.get('/', (req, res) => {
   res.send('Hello World.')
 })
 
-var connector = new builder.ChatConnector({
-  appId:process.env.MICROSOFT_APP_ID,
-  appPassword: process.env.MICROSOFT_APP_PASSWORD
-});
+// var connector = new builder.ChatConnector({
+//   appId:process.env.MICROSOFT_APP_ID,
+//   appPassword: process.env.MICROSOFT_APP_PASSWORD
+// });
 
 // var connector = new builder.ChatConnector({
 //   appId:null,
 //   appPassword: null
 // });
 
-var bot = new builder.UniversalBot(connector,(session) => 
-{
-    session.send("You said: %s",session.message.text);
-    session.send("Sending another message in 5 seconds...");
+// var bot = new builder.UniversalBot(connector,(session) => 
+// {
+//     session.send("You said: %s",session.message.text);
+//     session.send("Sending another message in 5 seconds...");
 
-    setTimeout(()=>{ session.send("This is a message after five seconds."); },5000);
+//     setTimeout(()=>{ session.send("This is a message after five seconds."); },5000);
 
-});
+// });
 
-restService.post('/api/messages',connector.listen());
+// restService.post('/api/messages',connector.listen());
 
 restService.post('/processStatement', (req, res) => {
   let isStatementThere = req.body.result && req.body.result.parameters && req.body.result.parameters.statement;
@@ -97,7 +97,7 @@ restService.post('/processStatement', (req, res) => {
 
           let speech = response[1].replace(/[\n\r\t]/g, ' ').trim().substring(15);
 
-          return res.json({
+          res.json({
             speech: speech,
             displayText: speech,
             source: 'digie-brain-app'
@@ -113,7 +113,7 @@ restService.post('/processStatement', (req, res) => {
 
           let speech = response[1].replace(/[\n\r\t]/g, ' ').trim().substring(15);
 
-          return res.json({
+          res.json({
             speech: speech,
             displayText: speech,
             source: 'digie-brain-app'
@@ -121,7 +121,7 @@ restService.post('/processStatement', (req, res) => {
         })
         .catch(error => {
           console.log(error);
-          return res.json({
+          res.json({
             speech: 'There was a technical error.',
             displayText: 'There was a technical error.',
             source: 'digie-brain-app'
@@ -131,7 +131,7 @@ restService.post('/processStatement', (req, res) => {
 
 
   } else {
-    return res.json({
+    res.json({
       speech: 'Please say something. Couldnt get that',
       displayText: 'Please say something. Couldnt get that',
       source: 'digie-brain-app'
@@ -171,7 +171,7 @@ function doApiAiEventRequest(currentSessionId)
       }
   };
 
-  let eventRequest = app.textRequest("Who am I?",{sessionId:currentSessionId});
+  let eventRequest = app.eventRequest(eventObject,{sessionId:currentSessionId});
 
   eventRequest.on('response',response => console.log(response));
 
