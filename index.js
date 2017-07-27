@@ -63,13 +63,14 @@ function requestVerifier(req, res, next) {
 
 restService.post('/alexa',requestVerifier, (req, res) => {
     if (req.body.request.type === 'IntentRequest') {
+    let speech = req.body.request.intent.slots.speech.value;
     res.json({
       "version": "1.0",
       "response": {
         "shouldEndSession": true,
         "outputSpeech": {
           "type": "SSML",
-          "ssml": "<speak>Hmm <break time=\"1s\"/> What day do you want to know about?</speak>"
+          "ssml": "<speak>Repeating <break time=\"1s\"/>" + speech + "<speak>"
         }
       }
     });
