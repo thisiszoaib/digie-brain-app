@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/thisiszoaib/digie-brain-app#readme",
   "dependencies": {
+    "alexa-verifier": "^0.3.6",
     "apiai": "^4.0.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
