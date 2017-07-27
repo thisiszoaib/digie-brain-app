@@ -70,7 +70,7 @@ restService.post('/alexa',requestVerifier, (req, res) => {
         "shouldEndSession": true,
         "outputSpeech": {
           "type": "SSML",
-          "ssml": "<speak>Repeating <break time=\"1s\"/>" + speech + "<speak>"
+          "ssml": "<speak>" + speech + "<speak>"
         }
       }
     });
