@@ -62,7 +62,7 @@ function requestVerifier(req, res, next) {
 }
 
 restService.post('/alexa', requestVerifier, (req, res) => {
-    console.log(JSON.stringify(req));
+    console.log(JSON.stringify(req.body.session.user));
     if (req.body.request.type === 'LaunchRequest') {
         res.json({
             "version": "1.0",
