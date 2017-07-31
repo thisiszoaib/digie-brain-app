@@ -33,7 +33,7 @@ let alexaVerifier = require('alexa-verifier');
 // };
 
 restService.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 
 restService.use(bodyParser.json({
@@ -43,7 +43,7 @@ restService.use(bodyParser.json({
 }));
 
 restService.get('/', (req, res) => {
-  res.send('Hello World.')
+    res.send('Hello World.')
 });
 
 function requestVerifier(req, res, next) {
@@ -61,20 +61,34 @@ function requestVerifier(req, res, next) {
     );
 }
 
-restService.post('/alexa',requestVerifier, (req, res) => {
-    if (req.body.request.type === 'IntentRequest') {
-    let speech = req.body.request.intent.slots.speech.value;
-    res.json({
-      "version": "1.0",
-      "response": {
-        "shouldEndSession": true,
-        "outputSpeech": {
-          "type": "SSML",
-          "ssml": "<speak>Repeating <break time=\"1s\"/>" + speech + "</speak>"
-        }
-      }
-    });
-  }
+restService.post('/alexa', requestVerifier, (req, res) => {
+    if (req.body.request.type === 'LaunchRequest') {
+        res.json({
+            "version": "1.0",
+            "response": {
+                "shouldEndSession": false,
+                "outputSpeech": {
+                    "type": "SSML",
+                    "ssml": "<speak>Hello from Digie. Speak anything and I will repeat...</speak>"
+                }
+            }
+        });
+    } else if (req.body.request.type === 'IntentRequest') {
+        let speech = req.body.request.intent.slots.speech.value;
+        res.json({
+            "version": "1.0",
+            "response": {
+                "shouldEndSession": false,
+                "outputSpeech": {
+                    "type": "SSML",
+                    "ssml": "<speak>Repeating <break time=\"1s\"/>" + speech + "</speak>"
+                }
+            }
+        });
+    }
+    else if (req.body.request.type === 'SessionEndedRequest'){
+        console.log('Session ended', req.body.request.reason);
+    }
 });
 
 // var connector = new builder.ChatConnector({
@@ -176,12 +190,12 @@ restService.post('/alexa',requestVerifier, (req, res) => {
 //     });
 //   }
 
-  
+
 
 // });
 
 restService.listen((process.env.PORT || 80), function () {
-  console.log('Server started.');
+    console.log('Server started.');
 })
 
 // function getOptionsObject(sessionId,statement)
